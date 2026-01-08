@@ -1,0 +1,90 @@
+.admin-dashboard {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: #809274;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.dashboard-header h1 {
+  font-size: 36px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.dashboard-header p {
+  font-size: 18px;
+  color:white;
+}
+
+.dashboard-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  text-decoration: none;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(243, 156, 76, 0.2);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-10px);
+}
+
+.dashboard-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.card-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.dashboard-card h3 {
+  font-size: 24px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.dashboard-card p {
+  color: #777;
+  font-size: 16px;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.usuarios { border-top: 4px solid #3A4632; }
+.talleres { border-top: 4px solid #3A4632; }
+.home { border-top: 4px solid #3A4632; }
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #3A4632;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
