@@ -1,150 +1,105 @@
-body{
-    font-family: Arial, Helvetica, sans-serif;
+.admin-panel {
+  padding: 16px;
 }
 
-.admin-panel { 
-  max-width: 800px; 
-  margin: 0 auto; 
-  padding: 20px; 
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
 }
 
-.tabs { 
-  display: flex; 
-  gap: 10px; 
-  margin-bottom: 30px; 
-}
-
-.tabs button { 
-  padding: 12px 20px; 
-  border: 2px solid #ddd; 
-  background: white; 
-  cursor: pointer; 
-  border-radius: 8px; 
-}
-
-.tabs button.active { 
-  background: #007bff; 
-  color: white; 
-  border-color: #007bff; 
-}
-
-.taller-item { 
-  display: flex; 
-  gap: 15px; 
-  padding: 15px; 
-  border: 1px solid #eee; 
-  border-radius: 8px; 
-  margin-bottom: 10px; 
-  align-items: center;
-}
-
-.acciones { 
-  margin-left: auto; 
-}
-
-.btn-editar { 
-  padding: 5px 15px; 
-  cursor: pointer; 
-  border-radius: 5px; 
-  background: #ffc107; 
-  color: black; 
-}
-
-.btn-borrar { 
-  background: #dc3545; 
-  color: white; 
+.tabs button {
+  padding: 12px;
+  border: 2px solid #ddd;
+  background: white;
   cursor: pointer;
-  padding: 5px 15px; 
-  border-radius: 5px; 
+  border-radius: 8px;
 }
 
-.form-row { 
-  display: flex; 
-  gap: 15px; 
+.tabs button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
 }
 
-.form-row input { 
-  flex: 1; 
+.taller-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
 }
 
-.form-buttons { 
-  display: flex; 
-  gap: 10px; 
-  margin-top: 20px; 
+.acciones {
+  display: flex;
+  gap: 8px;
 }
 
-.btn-cancelar { 
-  background: #6c757d; 
-  color: white; 
+.btn-editar,
+.btn-borrar {
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
 }
 
-.label-titulo {
-  display: block;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+.btn-editar {
+  background: #ffc107;
+  color: black;
 }
 
+.btn-borrar {
+  background: #dc3545;
+  color: white;
+}
+
+.form-taller {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.label-titulo,
 .label-archivo,
 .label-card {
   display: block;
   font-weight: 600;
   color: #2d3748;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-size: 0.95rem;
 }
 
-.input-card-titulo {
+.input-titulo,
+.input-precio,
+.input-fecha,
+.input-categoria,
+.input-card-titulo,
+.textarea-descripcion,
+.input-imagen {
   width: 100%;
-  padding: 1rem 1.2rem;
+  padding: 1rem;
   font-size: 1rem;
   border: 2px solid #e1e5e9;
   border-radius: 10px;
   font-family: inherit;
-  transition: all 0.3s ease;
   background: white;
-  margin-bottom: 1rem;
-}
-
-
-.form-taller {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.input-titulo {
-  width: 100%;
-  padding: 1rem 1.2rem;
-  font-size: 1.1rem;
-  border: 2px solid #e1e5e9;
-  border-radius: 10px;
-  font-family: inherit;
   transition: all 0.3s ease;
-  background: white;
-}
-
-.input-titulo:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 .textarea-descripcion {
-  width: 100%;
-  padding: 1rem 1.2rem;
-  font-size: 1rem;
-  border: 2px solid #e1e5e9;
-  border-radius: 10px;
-  font-family: inherit;
   resize: vertical;
   min-height: 120px;
-  transition: all 0.3s ease;
-  background: white;
 }
 
-.textarea-descripcion:focus {
+.input-imagen {
+  background: #f7fafc;
+  cursor: pointer;
+}
+
+input:focus,
+textarea:focus {
   outline: none;
   border-color: #4a90e2;
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
@@ -152,105 +107,34 @@ body{
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.input-precio,
-.input-fecha {
-  width: 100%;
-  padding: 1rem 1.2rem;
-  font-size: 1rem;
-  border: 2px solid #e1e5e9;
-  border-radius: 10px;
-  font-family: inherit;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.input-precio:focus,
-.input-fecha:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-}
-
-.input-categoria {
-  width: 100%;
-  padding: 1rem 1.2rem;
-  font-size: 1rem;
-  border: 2px solid #e1e5e9;
-  border-radius: 10px;
-  font-family: inherit;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.input-categoria:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-}
-
-.input-imagen {
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid #cbd5e0;
-  border-radius: 10px;
-  background: #f7fafc;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.input-imagen:hover {
-  border-color: #4a90e2;
-  background: #edf2f7;
-}
-
-.input-imagen:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-  background: white;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .form-buttons {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  margin-top: 1rem;
 }
 
 .btn-guardar {
-  flex: 1;
-  padding: 1rem 2rem;
+  padding: 1rem;
   background: #357abd;
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-.btn-guardar:hover {
-  transform: translateY(-2px);
-}
-
 .btn-cancelar {
-  padding: 1rem 2rem;
+  padding: 1rem;
   background: #f8f9fa;
-  color: #000000;
+  color: #000;
   border: 2px solid #dee2e6;
   border-radius: 12px;
-  font-weight: 500;
   cursor: pointer;
-}
-
-.btn-cancelar:hover {
-  background: #e9ecef;
-  border-color: #adb5bd;
-  transform: translateY(-1px);
 }
 
 .lista-usuarios {
@@ -265,30 +149,22 @@ body{
 
 .usuario-item {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: all 0.2s ease;
-}
-
-.usuario-item:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  transform: translateY(-1px);
 }
 
 .usuario-info {
   flex: 1;
-  min-width: 0;
 }
 
 .usuario-nombre {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.25rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .badge-rol {
@@ -304,46 +180,51 @@ body{
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  color: #6b7280;
   font-size: 0.9rem;
+  color: #6b7280;
 }
 
-.email {
-  font-weight: 500;
-  color: #374151;
-}
 
-.acciones {
-  display: flex;
-  gap: 0.5rem;
-}
+@media (min-width: 768px) {
 
-/* Mobile */
-@media (max-width: 768px) {
-  .usuario-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.25rem;
-  }
-  
-  .usuario-nombre {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  .admin-panel {
+    max-width: 800px;
+    margin: 0 auto;
   }
 
-  .formulario-taller {
-    padding: 1.5rem;
-    margin: 0.5rem;
+  .tabs {
+    flex-direction: row;
   }
-  
+
+  .taller-item {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .acciones {
+    margin-left: auto;
+  }
+
   .form-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
   }
-  
+
   .form-buttons {
-    flex-direction: column;
+    flex-direction: row;
+  }
+
+  .btn-guardar {
+    flex: 1;
+  }
+
+  .usuario-item {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .usuario-nombre {
+    flex-direction: row;
+    align-items: center;
   }
 }

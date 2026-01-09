@@ -7,7 +7,6 @@ export const AdminUsuarios = () => {
   const {
     usuarios, cargando, formData, setFormData,
     handleCrear, handleEditar, handleActualizar, handleEliminar,
-    editandoId, connection
   } = useUsuariosAdmin();
 
   if (cargando) return <div className="loading">Cargando usuarios...</div>;

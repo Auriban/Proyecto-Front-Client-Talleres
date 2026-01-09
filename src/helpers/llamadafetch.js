@@ -10,7 +10,6 @@ export const obtenerTalleres = async () => {
   return datos.data;
 };
 
-
 export const crearTaller = async (nuevoTaller) => {
   // Obtenemos el token JWT almacenado tras el login
   const token = localStorage.getItem('token');
@@ -46,8 +45,6 @@ export const crearTaller = async (nuevoTaller) => {
 
   return await respuesta.json();
 };
-
-
 
 export const actualizarTaller = async (id, tallerData) => {
   const token = localStorage.getItem('token');
@@ -94,14 +91,6 @@ export const eliminarTaller = async (id) => {
     throw new Error(`Error ${respuesta.status} al eliminar el taller`);
   }
 
- /*  
- // Algunos endpoints DELETE no devuelven JSON
-  // Este try/catch evita que la app se rompa
-  try {
-    return await respuesta.json();
-  } catch {
-    return { success: true };
-  } */
 };
 
 export const obtenerTallerPorId = async (id) => {
@@ -114,7 +103,6 @@ export const obtenerTallerPorId = async (id) => {
   const datos = await respuesta.json();
   return datos.data;
 };
-
 
 export const obtenerUsuarios = async () => {
   const token = localStorage.getItem('token');
@@ -133,7 +121,6 @@ export const obtenerUsuarios = async () => {
   return datos.data;
 };
 
-
 export const eliminarUsuario = async (id) => {
   const token = localStorage.getItem('token');
 
@@ -148,10 +135,95 @@ export const eliminarUsuario = async (id) => {
     throw new Error(`Error ${respuesta.status} al eliminar usuario`);
   }
 
-/*   
-try {
-    return await respuesta.json();
-  } catch {
-    return { success: true };
-  } */
 };
+
+export const inscribirseTaller = async (tallerId) => {
+  const token = localStorage.getItem('token');
+
+  const respuesta = await fetch(`${BASE_URL}/api/inscripciones`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ tallerId })
+  });
+
+  if (!respuesta.ok) {
+    throw new Error(`Error ${respuesta.status}: ${await respuesta.text()}`);
+  }
+
+  return await respuesta.json();
+};
+
+export const obtenerMisInscripciones = async () => {
+  const token = localStorage.getItem('token');
+
+  const respuesta = await fetch(`${BASE_URL}/api/inscripciones`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!respuesta.ok) {
+    throw new Error(`Error ${respuesta.status} al obtener inscripciones`);
+  }
+
+  const datos = await respuesta.json();
+  return datos.data;
+};
+
+export const cancelarInscripcion = async (inscripcionId) => {
+  const token = localStorage.getItem('token');
+
+  const respuesta = await fetch(`${BASE_URL}/api/inscripciones/${inscripcionId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!respuesta.ok) {
+    throw new Error(`Error ${respuesta.status} al cancelar inscripción`);
+  }
+
+  return await respuesta.json();
+};
+
+export const loginAuth = async (email, password) => {
+  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  
+  if (!res.ok) throw new Error((await res.json()).error || 'Error login');
+  return await res.json();
+};
+
+export const registerAuth = async (email, password, name) => {
+  const res = await fetch(`${BASE_URL}/api/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name })
+  });
+  
+  if (!res.ok) throw new Error((await res.json()).error || 'Error register');
+  return await res.json();
+};
+
+export const verificarPerfil = async () => {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    return null; //no hay token pero no pasa nada
+  }
+  
+  const res = await fetch(`${BASE_URL}/api/auth/perfil`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  
+  if (!res.ok) throw new Error('Token inválido');
+  return await res.json();
+};
+

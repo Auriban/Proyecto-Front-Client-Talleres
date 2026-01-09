@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthContext } from '../contexts/AuthContext';
 import './LoginPage.css';
 
 export const LoginPage = () => {
-  const { login, register, cargando, error } = useAuth();
+  // Usar el contexto (la instancia única compartida)
+  const { login, register, cargando, error } = useAuthContext();
   const navigate = useNavigate();
 
-  const [vista, setVista] = useState('login');
+  const [vista, setVista] = useState('register');
+
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -23,48 +25,61 @@ export const LoginPage = () => {
     
     if (vista === 'login') {
       const resp = await login(form.email, form.password);
+
+      //console.log(' LOGIN RESP', resp);
+      //console.log(' localStorage token', localStorage.getItem('token'));
+
       if (resp.ok) {
-        if (resp.usuario.role === 'admin') {
+        // Navegar según rol devuelto
+        const role = resp.usuario?.role || 'user';
+        if (role === 'admin') {
           navigate('/admin');
-        } else if (resp.usuario.role === 'user') {
-          navigate('/user');
         } else {
-          navigate('/home');
+          navigate('/user');
         }
       }
     } else {
       const resp = await register(form.email, form.password, form.name);
-      if (resp.ok) navigate('/user'); 
+      if (resp.ok) {
+        // después de registrarse normalmente es user,  ajustar según flujo
+        navigate('/user');
+      }
     }
   };
+
 
   return (
     <div className="login-page">
       <div className="login-card">
+
         <div className="login-tabs">
-          <button 
-            className={vista === 'login' ? 'tab-active' : 'tab'}
-            onClick={() => setVista('login')}
-          >
-            Iniciar Sesión
-          </button>
+
           <button 
             className={vista === 'register' ? 'tab-active' : 'tab'}
             onClick={() => setVista('register')}
           >
             Registrarse
           </button>
+          <button 
+            className={vista === 'login' ? 'tab-active' : 'tab'}
+            onClick={() => setVista('login')}
+          >
+            Ya tengo cuenta
+          </button>
         </div>
 
         <div className="login-header">
-          <h1>{vista === 'login' ? 'Bienvenido de nuevo' : 'Crear Cuenta'}</h1>
-          <p>{vista === 'login' ? 'Accede a tu cuenta' : 'Únete como usuario'}</p>
+          <h1>
+            {vista === 'register'
+              ? 'Crear cuenta'
+              : 'Iniciar sesión'}
+          </h1>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
           {vista === 'register' && (
             <label className="login-label">
-              Nombre completo
+              Nombre
               <input
                 type="text"
                 name="name"
@@ -83,7 +98,7 @@ export const LoginPage = () => {
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="tunombre@email.com"
+              placeholder="nombre@email.com"
               required
             />
           </label>
@@ -108,15 +123,17 @@ export const LoginPage = () => {
             className="login-button" 
             disabled={cargando}
           >
-            {cargando ? 'Procesando...' : 
-              (vista === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta')
-            }
+            {cargando
+              ? 'Procesando...'
+              : vista === 'register'
+                ? 'Crear Cuenta'
+                : 'Iniciar Sesión'}
           </button>
         </form>
 
-      <div className="login-footer">
-        <Link to="/">← Volver al inicio</Link>
-      </div>
+        <div className="login-footer">
+          <Link to="/">← Volver al inicio</Link>
+        </div>
 
       </div>
     </div>

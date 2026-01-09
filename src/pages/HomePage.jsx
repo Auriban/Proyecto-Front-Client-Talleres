@@ -37,9 +37,6 @@ export const HomePage = () => {
             <Link to="/talleres" className="btn-secondary">
               Explorar Talleres →
             </Link>
-            <Link to="/login" className="btn-primary">
-              Iniciar Sesión
-            </Link>
           </div>
         </div>
         {content.portada && (

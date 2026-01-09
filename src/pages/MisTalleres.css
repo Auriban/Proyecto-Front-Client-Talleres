@@ -1,0 +1,154 @@
+
+.mis-talleres {
+    padding: 2rem 1rem;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.sin-talleres {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f5f5f5;
+    border-radius: 12px;
+}
+
+.sin-talleres-emoji {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.mis-talleres-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.taller-mis {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.taller-mis:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.header-taller {
+    padding: 1.5rem 1.5rem 0;
+}
+
+.titulo-taller {
+    font-size: 1.25rem;
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.badge-inscrito {
+    background: #10b981;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.taller-details {
+    padding: 1rem 1.5rem 1.5rem;
+}
+
+.descripcion-taller {
+    color: #64748b;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.datos-taller {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dato-taller {
+    color: #64748b;
+}
+
+.dato-taller strong {
+    color: #2c3e50;
+    min-width: 70px;
+    display: inline-block;
+}
+
+.imagen-taller {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.btn-cancelar {
+    width: 100%;
+    padding: 0.75rem;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 1rem 1.5rem 1.5rem;
+    transition: background 0.3s ease;
+}
+
+.btn-cancelar:hover {
+    background: #dc2626;
+}
+
+.btn-ver-talleres {
+    padding: 0.75rem 1.5rem;
+    background: #A84628;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s ease;
+}
+
+.btn-ver-talleres:hover {
+    background: #db6d4b;
+}
+
+@media (min-width: 768px) {
+    .mis-talleres {
+        max-width: 1400px;
+        padding: 2rem 2rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .mis-talleres-grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+    
+    .taller-mis img {
+        height: 220px;
+    }
+}

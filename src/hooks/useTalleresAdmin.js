@@ -60,46 +60,46 @@ export const useTalleresAdmin = () => {
   /*
    * handleEliminar(id) = DELETE taller
    */
-const handleEliminar = async (id) => {
-  const result = await Swal.fire({
-    title: '¿Seguro que quieres eliminar?',
-    text: 'Esta acción no se puede deshacer',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  });
-
-  if (!result.isConfirmed) return;
-
-  try {
-    const resultado = await eliminarTaller(id);
-    console.log('Taller eliminado:', resultado);
-
-    // Refresca la lista
-    const nuevosTalleres = await obtenerTalleres();
-    setTalleres(nuevosTalleres);
-
-    Swal.fire({
-      title: 'Eliminado',
-      text: 'El taller se eliminó correctamente',
-      icon: 'success',
-      timer: 1500,
-      showConfirmButton: false
+  const handleEliminar = async (id) => {
+    const result = await Swal.fire({
+      title: '¿Seguro que quieres eliminar?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
     });
 
-  } catch (error) {
-    console.error('Error al eliminar:', error);
+    if (!result.isConfirmed) return;
 
-    Swal.fire({
-      title: 'Error',
-      text: 'No se pudo eliminar el taller',
-      icon: 'error'
-    });
-  }
-};
+    try {
+      const resultado = await eliminarTaller(id);
+      console.log('Taller eliminado:', resultado);
+
+      // Refresca la lista
+      const nuevosTalleres = await obtenerTalleres();
+      setTalleres(nuevosTalleres);
+
+      Swal.fire({
+        title: 'Eliminado',
+        text: 'El taller se eliminó correctamente',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo eliminar el taller',
+        icon: 'error'
+      });
+    }
+  };
 
   // CARGA inicial al montar componente
   useEffect(() => {
