@@ -21,7 +21,7 @@ export const UserNav = () => {
         <div className="nav-container">
           <div className="nav-bar">
             <div className="nav-links">
-              {/* Links que el usuario pedía tener "al lado" */}
+              
               <Link to="/user" className="nav-link">Mis Talleres</Link>
               <Link to="/user/home" className="nav-link">Home</Link>
               <Link to="/user/talleres" className="nav-link">Todos los Talleres</Link>
