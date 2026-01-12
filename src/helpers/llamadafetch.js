@@ -121,6 +121,46 @@ export const obtenerUsuarios = async () => {
   return datos.data;
 };
 
+export const crearUsuario = async (usuarioData) => {
+  const token = localStorage.getItem('token');
+
+  const respuesta = await fetch(`${BASE_URL}/api/usuarios`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(usuarioData)
+  });
+
+  if (!respuesta.ok) {
+    const text = await respuesta.text();
+    throw new Error(text || `Error ${respuesta.status} creando usuario`);
+  }
+
+  return await respuesta.json();
+};
+
+export const actualizarUsuario = async (id, usuarioData) => {
+  const token = localStorage.getItem('token');
+
+  const respuesta = await fetch(`${BASE_URL}/api/usuarios/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(usuarioData)
+  });
+
+  if (!respuesta.ok) {
+    const text = await respuesta.text();
+    throw new Error(text || `Error ${respuesta.status} actualizando usuario`);
+  }
+
+  return await respuesta.json();
+};
+
 export const eliminarUsuario = async (id) => {
   const token = localStorage.getItem('token');
 
