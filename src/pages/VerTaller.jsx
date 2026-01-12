@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useTallerDetalle } from '../hooks/useTallerDetalle';
 import { useInscripciones } from '../hooks/useInscripciones'; 
+import {Map} from '../components/Map';
 import Swal from 'sweetalert2'; 
 import './VerTaller.css';
 
@@ -60,12 +61,19 @@ export const VerTaller = () => {
         }
     };
 
+    // Formatea de la fecha para mostrarla legible 
+    const fechaObj = taller && taller.fecha ? new Date(taller.fecha) : null;
+    const fechaLegible = fechaObj && !Number.isNaN(fechaObj)
+      ? fechaObj.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })
+      : 'Fecha no disponible';
+
     return (
         <section className="taller-detalle">
             <div className="taller-info">
                 <h1>{taller.titulo}</h1>
                 <p>{taller.descripcion}</p>
-                <p><strong>FECHA:</strong> {taller.fecha}</p>
+                
+                <p><strong>FECHA:</strong> {fechaLegible}</p>
                 <p><strong>PRECIO:</strong> {taller.precio}€</p>
                 
                 {!usuario ? (
@@ -90,6 +98,13 @@ export const VerTaller = () => {
             </div>
             <div className="taller-imagen">
                 <img src={`${BASE_URL}${taller.imgTaller}`} alt={taller.titulo} />
+            </div>
+            <div className="mapa-container">
+                <h2>
+                Aquí puedes encontrarnos{' '}
+                </h2>
+                <p>{taller.localizacion?.direccion}</p>
+               <Map localizacion={taller.localizacion} />
             </div>
         </section>
     );

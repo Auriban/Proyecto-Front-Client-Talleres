@@ -40,11 +40,26 @@ export const useTalleresAdmin = () => {
   /*
    * handleEditar(id) = LLENA formulario con datos existentes
    */
-  const handleEditar = async (id) => {
+  const handleEditar = (id) => {
     const taller = talleres.find(t => t._id === id);
-    setFormData(taller);
-    setEditandoId(id);
-  };
+    if (!taller) return;
+
+    setFormData({
+      titulo: taller.titulo || '',
+      descripcion: taller.descripcion || '',
+      precio: taller.precio ?? '',
+      fecha: taller.fecha ? new Date(taller.fecha).toISOString().split('T')[0] : '',
+      categoria: taller.categoria || '',
+      imgTaller: '', // dejar vacío hasta que el usuario suba una nueva
+      direccion: taller.localizacion?.direccion || '',
+      // recuerda que coordinates = [lng, lat]
+      lat: (taller.localizacion?.coordinates && taller.localizacion.coordinates[1]) ?? '',
+      lng: (taller.localizacion?.coordinates && taller.localizacion.coordinates[0]) ?? '',
+      _id: taller._id
+  });
+
+  setEditandoId(id); // si usas esta variable
+};
 
   /*
    * handleActualizar() = PUT taller existente
@@ -101,12 +116,23 @@ export const useTalleresAdmin = () => {
     }
   };
 
+
+  const localizacion = {
+    type: 'Point',
+    coordinates: [
+      Number(formData.lng), // LONGITUD
+      Number(formData.lat)  // LATITUD
+    ],
+    direccion: formData.direccion
+  };
+
   // CARGA inicial al montar componente
   useEffect(() => {
     connection();
   }, []);
 
   return {
+    localizacion,
     talleres, 
     cargando, 
     formData,

@@ -1,27 +1,25 @@
 import { useAuth } from '../hooks/useAuth';
 import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { DashboardCard } from '../components/DashboardCard ';
 import './AdminDashboard.css';
 
 export const AdminDashboard = () => {
-  const { usuario, cargando } = useAuth();  
+ const { usuario, cargando } = useAuth();  
   const navigate = useNavigate();
-
   // console.log('USUARIO:', usuario);
 
   useEffect(() => {
     if (!cargando && (!usuario || usuario.role !== 'admin')) {
-      // console.log('NO ADMIN ');
       navigate('/login');
     }
   }, [usuario, cargando, navigate]);
 
-  // Loading
   if (cargando) {
     return <div className="loading">Cargando...</div>;
   }
+  // console.log('NO ADMIN ');
 
-  // No auth
   if (!usuario || usuario.role !== 'admin') {
     return <div>Redirigiendo...</div>;
   }
@@ -34,23 +32,26 @@ export const AdminDashboard = () => {
       </div>
 
       <div className="dashboard-grid">
-        <Link to="/admin/usuarios" className="dashboard-card usuarios">
-          <div className="card-icon">👥</div>
-          <h3>Gestión de Usuarios</h3>
-          <p>Crear, editar y eliminar usuarios</p>
-        </Link>
+        <DashboardCard
+          to="/admin/usuarios"
+          icon="👥"
+          title="Gestión de Usuarios"
+          description="Crear, editar y eliminar usuarios"
+        />
 
-        <Link to="/admin/talleres" className="dashboard-card talleres">
-          <div className="card-icon">🎨</div>
-          <h3>Gestión de Talleres</h3>
-          <p>Editar talleres y contenido</p>
-        </Link>
+        <DashboardCard
+          to="/admin/talleres"
+          icon="🎨"
+          title="Gestión de Talleres"
+          description="Editar talleres y contenido"
+        />
 
-        <Link to="/admin/home" className="dashboard-card home">
-          <div className="card-icon">🏠</div>
-          <h3>Editar Home</h3>
-          <p>Portada, título y cards</p>
-        </Link>
+        <DashboardCard
+          to="/admin/home"
+          icon="🏠"
+          title="Editar Home"
+          description="Portada, título y cards"
+        />
       </div>
     </div>
   );

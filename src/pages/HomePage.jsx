@@ -45,7 +45,7 @@ export const HomePage = () => {
       </section>
 
       <section className="talleres">
-        <h2>ELIGE EL TALLER</h2>
+        <h2>TENEMOS UN TALLER PARA CADA SITUACIÓN</h2>
         <div className="talleres-grid">
           <Link to="/talleres?categoria=desconexion">
             <div className="taller-public">

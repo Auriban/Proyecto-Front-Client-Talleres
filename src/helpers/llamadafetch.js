@@ -11,20 +11,26 @@ export const obtenerTalleres = async () => {
 };
 
 export const crearTaller = async (nuevoTaller) => {
-  // Obtenemos el token JWT almacenado tras el login
   const token = localStorage.getItem('token');
 
-  // FormData permite enviar texto + archivos 
   const datosForm = new FormData();
 
-  // Añadimos los campos del formulario
   datosForm.append('titulo', nuevoTaller.titulo);
   datosForm.append('descripcion', nuevoTaller.descripcion);
   datosForm.append('precio', nuevoTaller.precio);
   datosForm.append('fecha', nuevoTaller.fecha);
   datosForm.append('categoria', nuevoTaller.categoria);
 
-  // Solo añadimos la imagen si existe y es un archivo válido
+  if (nuevoTaller.direccion !== undefined) {
+    datosForm.append('direccion', nuevoTaller.direccion);
+  }
+  if (nuevoTaller.lat !== undefined && nuevoTaller.lat !== '') {
+    datosForm.append('lat', nuevoTaller.lat);
+  }
+  if (nuevoTaller.lng !== undefined && nuevoTaller.lng !== '') {
+    datosForm.append('lng', nuevoTaller.lng);
+  }
+
   if (nuevoTaller.imgTaller && nuevoTaller.imgTaller.name) {
     datosForm.append('imgTaller', nuevoTaller.imgTaller);
   }
@@ -32,9 +38,7 @@ export const crearTaller = async (nuevoTaller) => {
   const respuesta = await fetch(`${BASE_URL}/api/talleres/creartaller`, {
     method: 'POST',
     headers: {
-      // Enviamos el token en el header Authorization 
       'Authorization': `Bearer ${token}`
-      // No se define Content-Type porque fetch lo gestiona automáticamente con FormData
     },
     body: datosForm
   });
@@ -50,14 +54,21 @@ export const actualizarTaller = async (id, tallerData) => {
   const token = localStorage.getItem('token');
   const datosForm = new FormData();
 
-  // Añadimos los datos actualizados
   datosForm.append('titulo', tallerData.titulo);
   datosForm.append('descripcion', tallerData.descripcion);
   datosForm.append('precio', tallerData.precio);
   datosForm.append('fecha', tallerData.fecha);
   datosForm.append('categoria', tallerData.categoria);
 
-  // La imagen solo se envía si el usuario selecciona una nueva
+  if (tallerData.direccion !== undefined) {
+    datosForm.append('direccion', tallerData.direccion);
+  }
+  if (tallerData.lat !== undefined && tallerData.lat !== '') {
+    datosForm.append('lat', tallerData.lat);
+  }
+  if (tallerData.lng !== undefined && tallerData.lng !== '') {
+    datosForm.append('lng', tallerData.lng);
+  }
   if (tallerData.imgTaller && tallerData.imgTaller.name) {
     datosForm.append('imgTaller', tallerData.imgTaller);
   }
