@@ -1,14 +1,25 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth'; 
+import { useAuth } from './useAuth';
 import { obtenerMisInscripciones, inscribirseTaller, cancelarInscripcion } from '../helpers/llamadafetch';
 
+/**
+ * Hook que maneja las inscripciones del usuario logueado.
+ *
+ * - Carga las inscripciones si hay usuario.
+ * - Permite inscribirse y cancelar una inscripción.
+ * - Mantiene estado de carga y lista actualizada.
+ */
 export const useInscripciones = () => {
+  // Lista de inscripciones del usuario
   const [inscripciones, setInscripciones] = useState([]);
+  // Flag para indicar que se está haciendo una petición
   const [cargando, setCargando] = useState(false);
-  const { usuario } = useAuth();  
+  // Usuario desde el hook de authh > si es null, no hay sesión
+  const { usuario } = useAuth();
 
+  // Función que carga las inscripciones desde la API.
+  // No hace la petición si no hay usuario
   const cargarInscripciones = async () => {
-    // NO hace fetch si no hay login
     if (!usuario) {
       setInscripciones([]);
       return;
@@ -26,7 +37,8 @@ export const useInscripciones = () => {
     }
   };
 
-  // Inscribirse
+  // Inscribirse en un taller.
+  // Devuelve { ok: true } si todo fue bien o { ok: false, msg } si falló.
   const inscribirse = async (tallerId) => {
     if (!usuario) {
       return { ok: false, msg: 'Debes iniciar sesión' };
@@ -35,15 +47,18 @@ export const useInscripciones = () => {
     try {
       setCargando(true);
       const resultado = await inscribirseTaller(tallerId);
-      await cargarInscripciones(); // Refresca lista
-      return { ok: true, msg: resultado.msg };
+      // Refrescar la lista después de inscribir
+      await cargarInscripciones();
+      return { ok: true, msg: resultado?.msg };
     } catch (error) {
-      return { ok: false, msg: error.message };
+      // Error.message
+      return { ok: false, msg: error?.message || 'Error al inscribirse' };
     } finally {
       setCargando(false);
     }
   };
 
+  // Cancelar una inscripción por id.
   const cancelar = async (inscripcionId) => {
     if (!usuario) {
       return { ok: false, msg: 'Debes iniciar sesión' };
@@ -52,20 +67,21 @@ export const useInscripciones = () => {
     try {
       setCargando(true);
       await cancelarInscripcion(inscripcionId);
-      await cargarInscripciones(); // Refresca lista
+      // Refrescar la lista después de cancelar
+      await cargarInscripciones();
       return { ok: true };
     } catch (error) {
       console.error('Error cancelando:', error);
-      return { ok: false };
+      return { ok: false, msg: error?.message || 'Error al cancelar' };
     } finally {
       setCargando(false);
     }
   };
 
-  // SOLO carga si está logueado
+  // Cargar inscripciones al montar y cada vez que cambia el usuario.
   useEffect(() => {
     cargarInscripciones();
-  }, [usuario]); 
+  }, [usuario]);
 
   return {
     inscripciones,

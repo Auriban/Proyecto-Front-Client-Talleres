@@ -4,10 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import { DashboardCard } from '../components/DashboardCard ';
 import './AdminDashboard.css';
 
+/**
+ * Panel de administración.
+ *
+ * - Comprueba el estado de autenticación usando useAuth.
+ * - Si el usuario no está cargado todavía muestra un indicador de carga.
+ * - Si no hay usuario o no es admin redirige a /login.
+ * - Muestra tarjetas con enlaces a las secciones de administración.
+ *
+ * @returns {JSX.Element} Interfaz del panel de administración.
+ */
 export const AdminDashboard = () => {
- const { usuario, cargando } = useAuth();  
+  const { usuario, cargando } = useAuth();
   const navigate = useNavigate();
-  // console.log('USUARIO:', usuario);
+
+  console.log('USUARIO:', usuario);
 
   useEffect(() => {
     if (!cargando && (!usuario || usuario.role !== 'admin')) {
@@ -18,7 +29,8 @@ export const AdminDashboard = () => {
   if (cargando) {
     return <div className="loading">Cargando...</div>;
   }
-  // console.log('NO ADMIN ');
+
+  console.log('NO ADMIN ');
 
   if (!usuario || usuario.role !== 'admin') {
     return <div>Redirigiendo...</div>;

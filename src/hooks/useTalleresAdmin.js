@@ -2,44 +2,83 @@ import { useState, useEffect } from 'react';
 import { obtenerTalleres, crearTaller, actualizarTaller, eliminarTaller } from '../helpers/llamadafetch';
 import Swal from 'sweetalert2';
 
+/**
+ * Hook para gestionar talleres desde el área de admin.
+ * - Carga la lista de talleres.
+ * - Crear, editar, actualizar y eliminar.
+ *
+ * Devuelve estados y handlers para usar en el componente administrador.
+ */
 export const useTalleresAdmin = () => {
-
   const [talleres, setTalleres] = useState([]);
   const [cargando, setCargando] = useState(true);
-  
-   const [formData, setFormData] = useState({
-    titulo: '', descripcion: '', precio: '', fecha: '', categoria: '', imgTaller: ''
+
+  const [formData, setFormData] = useState({
+    titulo: '',
+    descripcion: '',
+    precio: '',
+    fecha: '',
+    categoria: '',
+    imgTaller: '',
+    direccion: '',
+    lat: '',
+    lng: ''
   });
+
   const [editandoId, setEditandoId] = useState(null);
 
-  /*
-   * connection() = CARGA lista de talleres
-   * Se ejecuta al cargar página Y después de cada CRUD
-   */
+  // Carga la lista de talleres
   const connection = async () => {
     setCargando(true);
     try {
       const data = await obtenerTalleres();
-      setTalleres(data);
+      setTalleres(data || []);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error cargando talleres:', error);
+      setTalleres([]);
+    } finally {
+      setCargando(false);
     }
-    setCargando(false);
   };
 
-  /*
-   * handleCrear() = POST nuevo taller
-   */
+  // Crear nuevo taller
   const handleCrear = async (e) => {
     e.preventDefault();
-    await crearTaller(formData);
-    connection(); // Recarga lista
-    setFormData({ titulo: '', descripcion: '', precio: '', fecha: '', categoria: '', imgTaller: '' });
+    try {
+      setCargando(true);
+      await crearTaller(formData);
+      await connection(); // refrescar lista
+      setFormData({
+        titulo: '',
+        descripcion: '',
+        precio: '',
+        fecha: '',
+        categoria: '',
+        imgTaller: '',
+        direccion: '',
+        lat: '',
+        lng: ''
+      });
+      Swal.fire({
+        title: 'Creado',
+        text: 'Taller creado correctamente',
+        icon: 'success',
+        timer: 1400,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Error creando taller:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo crear el taller',
+        icon: 'error'
+      });
+    } finally {
+      setCargando(false);
+    }
   };
 
-  /*
-   * handleEditar(id) = LLENA formulario con datos existentes
-   */
+  // Rellenar formulario para editar
   const handleEditar = (id) => {
     const taller = talleres.find(t => t._id === id);
     if (!taller) return;
@@ -50,31 +89,57 @@ export const useTalleresAdmin = () => {
       precio: taller.precio ?? '',
       fecha: taller.fecha ? new Date(taller.fecha).toISOString().split('T')[0] : '',
       categoria: taller.categoria || '',
-      imgTaller: '', // dejar vacío hasta que el usuario suba una nueva
+      imgTaller: '',
       direccion: taller.localizacion?.direccion || '',
-      // recuerda que coordinates = [lng, lat]
+
       lat: (taller.localizacion?.coordinates && taller.localizacion.coordinates[1]) ?? '',
-      lng: (taller.localizacion?.coordinates && taller.localizacion.coordinates[0]) ?? '',
-      _id: taller._id
-  });
+      lng: (taller.localizacion?.coordinates && taller.localizacion.coordinates[0]) ?? ''
+    });
 
-  setEditandoId(id); // si usas esta variable
-};
-
-  /*
-   * handleActualizar() = PUT taller existente
-   */
-  const handleActualizar = async (e) => {
-    e.preventDefault();
-    await actualizarTaller(editandoId, formData);
-    connection(); // Recarga lista
-    setEditandoId(null);
-    setFormData({ titulo: '', descripcion: '', precio: '', fecha: '', categoria: '', imgTaller: '' });
+    setEditandoId(id);
   };
 
-  /*
-   * handleEliminar(id) = DELETE taller
-   */
+  // Actualizar taller existente
+  const handleActualizar = async (e) => {
+    e.preventDefault();
+    if (!editandoId) return;
+
+    try {
+      setCargando(true);
+      await actualizarTaller(editandoId, formData);
+      await connection();
+      setEditandoId(null);
+      setFormData({
+        titulo: '',
+        descripcion: '',
+        precio: '',
+        fecha: '',
+        categoria: '',
+        imgTaller: '',
+        direccion: '',
+        lat: '',
+        lng: ''
+      });
+      Swal.fire({
+        title: 'Actualizado',
+        text: 'Taller actualizado correctamente',
+        icon: 'success',
+        timer: 1400,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Error actualizando taller:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo actualizar el taller',
+        icon: 'error'
+      });
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  // Eliminar taller con popup
   const handleEliminar = async (id) => {
     const result = await Swal.fire({
       title: '¿Seguro que quieres eliminar?',
@@ -90,12 +155,11 @@ export const useTalleresAdmin = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const resultado = await eliminarTaller(id);
-      console.log('Taller eliminado:', resultado);
+      await eliminarTaller(id);
 
-      // Refresca la lista
+      // refrescar lista de talleres
       const nuevosTalleres = await obtenerTalleres();
-      setTalleres(nuevosTalleres);
+      setTalleres(nuevosTalleres || []);
 
       Swal.fire({
         title: 'Eliminado',
@@ -104,10 +168,8 @@ export const useTalleresAdmin = () => {
         timer: 1500,
         showConfirmButton: false
       });
-
     } catch (error) {
       console.error('Error al eliminar:', error);
-
       Swal.fire({
         title: 'Error',
         text: 'No se pudo eliminar el taller',
@@ -116,7 +178,7 @@ export const useTalleresAdmin = () => {
     }
   };
 
-
+  // Construye la localización usando los campos del formulario
   const localizacion = {
     type: 'Point',
     coordinates: [
@@ -126,23 +188,23 @@ export const useTalleresAdmin = () => {
     direccion: formData.direccion
   };
 
-  // CARGA inicial al montar componente
+  // Carga inicial
   useEffect(() => {
     connection();
   }, []);
 
   return {
     localizacion,
-    talleres, 
-    cargando, 
+    talleres,
+    cargando,
     formData,
     setFormData,
     handleCrear,
-    handleEditar, 
-    handleActualizar, 
+    handleEditar,
+    handleActualizar,
     handleEliminar,
-    editandoId, 
-    setEditandoId, 
+    editandoId,
+    setEditandoId,
     connection
   };
 };

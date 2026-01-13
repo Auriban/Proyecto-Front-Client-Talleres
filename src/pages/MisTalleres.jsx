@@ -2,11 +2,23 @@ import { Link } from 'react-router-dom';
 import { useInscripciones } from '../hooks/useInscripciones';
 import Swal from 'sweetalert2'; 
 import './MisTalleres.css'; 
+
 const BASE_URL = import.meta.env.VITE_URL || 'http://localhost:3000';
+
+/**
+ * Página con los talleres en los que está inscrito el usuario.
+ *
+ * - Muestra un estado de carga mientras se obtienen las inscripciones.
+ * - Si no hay inscripciones muestra un mensaje y un enlace a la lista de talleres.
+ * - Permite cancelar una inscripción con confirmación.
+ *
+ * @returns {JSX.Element}
+ */
 
 export const MisTalleres = () => {
   const { inscripciones, cargando, cancelar } = useInscripciones();
 
+  // Confirmación y llamada a la función de cancelar del hook
   const handleCancelar = async (id) => {
     const result = await Swal.fire({
       title: '¿Seguro que quieres cancelar?',

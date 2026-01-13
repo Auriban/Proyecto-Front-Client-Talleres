@@ -5,23 +5,26 @@ import './TodosTalleresPage.css';
 
 const BASE_URL = import.meta.env.VITE_URL || 'http://localhost:3000';
 
+/**
+ * Página pública con todos los talleres.
+ *
+ * - Usa el hook useTalleres (devuelve { talleres, cargando }).
+ * - Permite filtrar por categoría 
+ */
 export const TodosTalleresPage = () => {
-  const { talleres, loading, error, recargar } = useTalleres();
+  // Obtener talleres y estado de carga desde el hook
+  const { talleres, cargando } = useTalleres();
+
+  // Leer ?categoria=... de la URL al montar
   const [searchParams] = useSearchParams();
   const [categoriaActiva, setCategoriaActiva] = useState(
     searchParams.get('categoria') || ''
   );
 
-  if (loading) return <div className="loading">Cargando talleres...</div>;
-  
-  if (error) return (
-    <div className="error">
-      <h2>Error al cargar</h2>
-      <button onClick={recargar}>Reintentar</button>
-    </div>
-  );
+  if (cargando) return <div className="loading">Cargando talleres...</div>;
 
-  const talleresFiltrados = categoriaActiva 
+  // Filtrar según la categoría activa (si hay)
+  const talleresFiltrados = categoriaActiva
     ? talleres.filter(taller => taller.categoria === categoriaActiva)
     : talleres;
 
@@ -29,31 +32,46 @@ export const TodosTalleresPage = () => {
     <div className="public-talleres">
       <header className="page-header">
         <h1>TODOS NUESTROS TALLERES</h1>
-        <p>Explora todos nuestros talleres disponibles</p>
+        <p>Explora todos los talleres disponibles</p>
       </header>
 
       <div className="talleres-categorias">
-        <div 
+        <div
           className={`categoria-card ${categoriaActiva === '' ? 'active' : ''}`}
           onClick={() => setCategoriaActiva('')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => {}}
         >
           Todas
         </div>
-        <div 
+
+        <div
           className={`categoria-card ${categoriaActiva === 'creatividad' ? 'active' : ''}`}
           onClick={() => setCategoriaActiva('creatividad')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => {}}
         >
           Creatividad
         </div>
-        <div 
+
+        <div
           className={`categoria-card ${categoriaActiva === 'desconexion' ? 'active' : ''}`}
           onClick={() => setCategoriaActiva('desconexion')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => {}}
         >
           Desconexión
         </div>
-        <div 
+
+        <div
           className={`categoria-card ${categoriaActiva === 'deporte' ? 'active' : ''}`}
           onClick={() => setCategoriaActiva('deporte')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => {}}
         >
           Deporte
         </div>
@@ -63,17 +81,17 @@ export const TodosTalleresPage = () => {
         <div className="talleres-grid">
           {talleresFiltrados.map((taller) => (
             <article key={taller._id} className="taller-public">
-              <img 
-                src={`${BASE_URL}${taller.imgTaller}`} 
-                alt={taller.titulo} 
-                width="50" 
+              <img
+                src={`${BASE_URL}${taller.imgTaller}`}
+                alt={taller.titulo}
+                width="50"
               />
               <div className="taller-content">
                 <h3>{taller.titulo}</h3>
-                <p>{taller.descripcion}</p>           
-                <button className="btn-ver-taller">
-                  <Link to={`/talleres/${taller._id}`}>Ver Taller</Link> 
-                </button>
+                <p>{taller.descripcion}</p>
+                <Link to={`/talleres/${taller._id}`} className="btn-ver-taller">
+                  Ver Taller
+                </Link>
               </div>
             </article>
           ))}

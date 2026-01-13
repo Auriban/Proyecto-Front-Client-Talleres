@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import {
-  obtenerUsuarios,
-  crearUsuario,
-  actualizarUsuario,
-  eliminarUsuario
-} from '../helpers/llamadafetch';
+import {  obtenerUsuarios,  crearUsuario,  actualizarUsuario,  eliminarUsuario} from '../helpers/llamadafetch';
 
+/**
+ * Hook para gestionar usuarios desde el admin.
+ *
+ * - Carga la lista de usuarios.
+ * - Permite crear, editar, actualizar y eliminar usuarios.
+ * - Usa SweetAlert2 para mensajes
+ */
 export const useUsuariosAdmin = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -38,23 +40,27 @@ export const useUsuariosAdmin = () => {
   // Crear usuario (POST)
   const handleCrear = async (e) => {
     e.preventDefault();
-    try {
-      // validación básica
-      if (!formData.name || !formData.email || !formData.password) {
-        return Swal.fire('Atención', 'Nombre, email y contraseña son obligatorios', 'info');
-      }
 
+    // validación simple
+    if (!formData.name || !formData.email || !formData.password) {
+      return Swal.fire('Atención', 'Nombre, email y contraseña son obligatorios', 'info');
+    }
+
+    try {
+      setCargando(true);
       await crearUsuario(formData);
-      await connection(); // recarga lista
+      await connection(); // recargar lista
       setFormData({ name: '', email: '', password: '', role: 'user' });
       Swal.fire('Creado', 'Usuario creado correctamente', 'success');
     } catch (err) {
       console.error(err);
       Swal.fire('Error', err.message || 'No se pudo crear el usuario', 'error');
+    } finally {
+      setCargando(false);
     }
   };
 
-  // Preparar edición: cargar datos en el form
+  // Preparar edición > cargar datos en el form
   const handleEditar = (id) => {
     const u = usuarios.find(x => x._id === id);
     if (!u) {
@@ -63,11 +69,10 @@ export const useUsuariosAdmin = () => {
     setFormData({
       name: u.name || '',
       email: u.email || '',
-      password: '', // vaciar por seguridad
+      password: '', 
       role: u.role || 'user'
     });
     setEditandoId(id);
-    // El componente que llama debe cambiar la vista a 'editar'
   };
 
   // Actualizar usuario (PUT)
@@ -76,12 +81,15 @@ export const useUsuariosAdmin = () => {
     if (!editandoId) {
       return Swal.fire('Error', 'No hay usuario seleccionado', 'error');
     }
+
     try {
+      setCargando(true);
       const payload = {
         name: formData.name,
         email: formData.email,
         role: formData.role
       };
+      // enviar la contraseña solo si se indicó
       if (formData.password) payload.password = formData.password;
 
       await actualizarUsuario(editandoId, payload);
@@ -92,6 +100,8 @@ export const useUsuariosAdmin = () => {
     } catch (err) {
       console.error(err);
       Swal.fire('Error', err.message || 'No se pudo actualizar el usuario', 'error');
+    } finally {
+      setCargando(false);
     }
   };
 
@@ -111,19 +121,21 @@ export const useUsuariosAdmin = () => {
     if (!result.isConfirmed) return;
 
     try {
+      setCargando(true);
       await eliminarUsuario(id);
-      // recargar lista (o filtrar localmente)
+      // actualizar la lista localmente para evitar otra petición
       setUsuarios(prev => prev.filter(u => u._id !== id));
       Swal.fire('Eliminado', 'El usuario fue eliminado', 'success');
     } catch (err) {
       console.error(err);
       Swal.fire('Error', 'No se pudo eliminar el usuario', 'error');
+    } finally {
+      setCargando(false);
     }
   };
 
   useEffect(() => {
     connection();
-
   }, []);
 
   return {

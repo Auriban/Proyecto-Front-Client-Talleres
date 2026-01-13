@@ -4,9 +4,16 @@ import './AdminPanelPages.css';
 
 const BASE_URL = import.meta.env.VITE_URL || 'http://localhost:3000'; 
 
+/**
+ * Página de administración de talleres.
+ *
+ * - Muestra lista, formulario de crear y formulario de editar.
+ * - Usa el hook useTalleresAdmin para obtener datos y handlers.
+ */
 export const AdminPanelPages = () => {
   const [vista, setVista] = useState('lista');
 
+  // Extraemos todo lo necesario del hook que maneja la lógica CRUD
   const {
     talleres,
     cargando,
@@ -18,20 +25,24 @@ export const AdminPanelPages = () => {
     handleEliminar,
   } = useTalleresAdmin();
 
+  // Mientras se cargan los talleres
   if (cargando) return <p>Cargando...</p>;
 
-    // Formatea de la fecha para mostrarla legible 
-    const formatDate = (value) => {
-      if (!value) return 'Fecha no disponible';
-      const d = (value instanceof Date) ? value : new Date(value);
-      if (Number.isNaN(d)) return 'Fecha no disponible';
-      return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
-    };
+  /**
+   * formatea la fecha para que se vea legible en la lista..
+   */
+  const formatDate = (value) => {
+    if (!value) return 'Fecha no disponible';
+    const d = (value instanceof Date) ? value : new Date(value);
+    if (Number.isNaN(d)) return 'Fecha no disponible';
+    return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+  };
 
   return (
     <div className="admin-panel">
       <h1>Admin Talleres</h1>
 
+      {/* Pestañas para cambiar entre lista y formulario */}
       <div className="tabs">
         <button
           className={vista === 'lista' ? 'active' : ''}
@@ -48,13 +59,14 @@ export const AdminPanelPages = () => {
         </button>
       </div>
 
-    {vista === 'lista' && (
+      {vista === 'lista' && (
         <div className="lista-talleres">
           <h2>Actualmente hay {talleres.length} talleres</h2>
 
           {talleres.length === 0 ? (
             <p>
               No hay talleres.
+              {/* Botón rápido para cambiar a la vista de crear */}
               <button onClick={() => setVista('crear')}>
                 Crear el primero
               </button>
@@ -65,6 +77,7 @@ export const AdminPanelPages = () => {
                 const fechaLegible = formatDate(taller.fecha);
                 return (
                   <div key={taller._id} className="taller-item">
+                    {/* Mostrar imagen; BASE_URL se añade porque el backend devuelve ruta relativa */}
                     <img
                       src={`${BASE_URL}${taller.imgTaller}`}
                       alt={taller.titulo}
@@ -73,12 +86,15 @@ export const AdminPanelPages = () => {
 
                     <div>
                       <strong>{taller.titulo}</strong><br />
+                      {/* Datos resumidos: categoría, fecha y precio */}
                       {taller.categoria} • {fechaLegible} • €{taller.precio}
                       <br />
+                      {/* Dirección si existe */}
                       <small>{taller?.localizacion?.direccion}</small>
                     </div>
 
                     <div className="acciones">
+                      {/* Editar: rellena el formulario (handleEditar) y cambia a la vista 'editar' */}
                       <button
                         className="btn-editar"
                         onClick={() => {
@@ -89,6 +105,7 @@ export const AdminPanelPages = () => {
                         Editar
                       </button>
 
+                      {/* Borrar: confirma y elimina (el hook maneja confirmación y recarga) */}
                       <button
                         className="btn-borrar"
                         onClick={() => handleEliminar(taller._id)}
@@ -108,6 +125,7 @@ export const AdminPanelPages = () => {
         <div className="formulario-taller">
           <h2>{vista === 'crear' ? '+ Nuevo Taller' : 'Editar Taller'}</h2>
 
+          {/* El onSubmit depende de si estamos editando o creando */}
           <form
             className="form-taller"
             onSubmit={vista === 'editar' ? handleActualizar : handleCrear}
@@ -173,6 +191,7 @@ export const AdminPanelPages = () => {
               required
             />
 
+            {/* Lat/Lng: se piden como números (step="any" para decimales) */}
             <div className="form-row">
               <input
                 type="number"
@@ -197,12 +216,14 @@ export const AdminPanelPages = () => {
               />
             </div>
 
+            {/* Subida de imagen: guardamos el File en formData.imgTaller */}
             <input
               type="file"
               accept="image/jpeg,image/png,image/jpg"
               onChange={e => {
                 const file = e.target.files[0];
                 if (file) {
+                  // Guardar el archivo para enviarlo con FormData en el hook
                   setFormData({ ...formData, imgTaller: file });
                 }
               }}
@@ -217,6 +238,7 @@ export const AdminPanelPages = () => {
                 type="button"
                 className="btn-cancelar"
                 onClick={() => {
+                  // Volver a la lista y limpiar el formulario localmente
                   setVista('lista');
                   setFormData({
                     titulo: '',

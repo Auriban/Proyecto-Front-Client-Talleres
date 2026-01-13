@@ -3,8 +3,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../contexts/AuthContext';
 import './LoginPage.css';
 
+/**
+ * Página de login y registro.
+ *
+ * - Gestiona las vistas de registro e inicio de sesión.
+ * - Usa el contexto de autenticación para realizar login/registro.
+ * - Redirige según el rol devuelto por la API.
+ *
+ * @returns {JSX.Element}
+ */
+
 export const LoginPage = () => {
-  // Usar el contexto (la instancia única compartida)
+  // Usar el contexto 
   const { login, register, cargando, error } = useAuthContext();
   const navigate = useNavigate();
 
@@ -41,7 +51,7 @@ export const LoginPage = () => {
     } else {
       const resp = await register(form.email, form.password, form.name);
       if (resp.ok) {
-        // después de registrarse normalmente es user,  ajustar según flujo
+        // después de registrarse normalmente es user, ajustar según flujo
         navigate('/user');
       }
     }
