@@ -1,49 +1,56 @@
 import { Outlet, useLocation, Link, Navigate } from 'react-router-dom';
 import { useAuthContext } from '../contexts/AuthContext';
 import './Nav.css';
+import { useState, useEffect } from 'react';
+import { slide as Menu } from 'react-burger-menu';
 
-/**
- * Barra de navegación para la zona de administración.
- *
- * Restringe acceso a usuarios que no tengan role "admin" y muestra los enlaces
- * del panel junto a un Outlet para las rutas hijas.
- *
- * @returns {JSX.Element}
- */
 export const AdminNav = () => {
-  // Obtiene el objeto de usuario y la función de logout desde el contexto.
   const { usuario, logout } = useAuthContext();
-
-  // Ruta actual > se guarda al redirigir para poder volver tras el login.
   const location = useLocation();
 
-  // Si no existe usuario o no tiene rol 'admin', redirige a /login.
+  const [open, setOpen] = useState(false);
+
   if (!usuario || usuario.role !== 'admin') {
+    // Si no es admin, fuera
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   return (
     <div>
       <nav className="admin-nav">
         <div className="nav-container">
           <div className="nav-bar">
-            {/* Enlaces principales del panel de administración */}
+            {/* react-burger-menu (visible en móvil) */}
+            <Menu
+              right
+              isOpen={open}
+              onStateChange={(state) => setOpen(state.isOpen)}
+              className="mobile-burger-menu"
+            >
+              <Link to="/admin" className="bm-item" onClick={() => setOpen(false)}>Panel Admin</Link>
+              <Link to="/admin/usuarios" className="bm-item" onClick={() => setOpen(false)}>Usuarios</Link>
+              <Link to="/admin/home" className="bm-item" onClick={() => setOpen(false)}>Home Admin</Link>
+              <Link to="/admin/talleres" className="bm-item" onClick={() => setOpen(false)}>Talleres Admin</Link>
+              <button onClick={() => { logout(); setOpen(false); }} className="bm-item btn-logout">Logout</button>
+            </Menu>
+
+            {/* Enlaces para escritorio (ocultos en móvil) */}
             <div className="nav-links">
               <Link to="/admin" className="nav-link nav-link-admin">Panel Admin</Link>
-              <Link to="/admin/usuarios" className="nav-link">Usuarios Admin</Link>
+              <Link to="/admin/usuarios" className="nav-link">Usuarios</Link>
               <Link to="/admin/home" className="nav-link">Home Admin</Link>
               <Link to="/admin/talleres" className="nav-link">Talleres Admin</Link>
             </div>
-
-            {/* Botón que invoca logout del contexto para cerrar sesión */}
-            <div>
+            <div className="nav-actions-desktop">
               <button onClick={() => logout()} className="btn-logout">Logout</button>
             </div>
           </div>
         </div>
       </nav>
-
-      {/* Lugar donde se renderizan las rutas hijas del admin */}
       <main className="main-content">
         <Outlet />
       </main>

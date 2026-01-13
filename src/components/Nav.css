@@ -4,8 +4,8 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  margin: 0;        
-  padding: 0;      
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
 }
 
@@ -26,15 +26,14 @@ html {
   align-items: center;
   height: 64px;
   padding: 0 1rem;
+  position: relative;
 }
 
+
 .nav-links {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  display: none;
 }
+
 
 .nav-link {
   font-weight: 500;
@@ -44,7 +43,7 @@ html {
 }
 
 .nav-link:hover {
-  color: #3A4632; 
+  color: #3A4632;
 }
 
 .nav-link-admin {
@@ -56,13 +55,14 @@ html {
 }
 
 .btn-login {
-  background-color: #3A4632; 
+  background-color: #3A4632;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
+  border: none;
 }
 
 .btn-login:hover {
@@ -87,34 +87,66 @@ html {
   background-color: #b91c1c;
 }
 
-.nav-user-info,
-.nav-admin-info {
-  font-size: 0.875rem;
-  color: #6b7280;
+.bm-burger-button {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  color: #3A4632!important;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 30px;
+  z-index: 2100;
 }
 
-.nav-admin-info {
-  color: white;
+
+.bm-burger-bars {
+  background: #111827;
+  height: 3px;
+  border-radius: 2px;
 }
 
-.loading-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.125rem;
+.bm-burger-bars-hover {
+  background: #3A4632;
 }
 
-.public-nav {
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  border-bottom: 1px solid #e5e7eb;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 100%;
+
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+.bm-cross {
+  background: #111827;
 }
 
+.bm-menu {
+  background: #fff;
+  padding: 1.5rem 1rem;
+  font-size: 1rem;
+  z-index: 2050;
+  right: 0;
+}
+
+.bm-item {
+  display: block;
+  padding: 0.55rem 0;
+  text-decoration: none;
+  text-align: center;
+}
+.bm-item:hover {
+  color: #3A4632;
+}
+
+.bm-overlay {
+  background: rgba(255, 255, 255, 0)!important;
+  z-index: 2040;
+}
+
+
+.nav-actions-desktop {
+  display: none;
+}
+
+.public-nav,
 .admin-nav {
   background-color: white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -126,9 +158,49 @@ html {
 }
 
 
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+}
+
+.nav-user-info,
+.nav-admin-info {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.nav-admin-info {
+  color: white;
+}
+
 @media (min-width: 768px) {
- 
   .nav-bar {
     padding: 0 2rem;
   }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+
+
+  .nav-actions-desktop {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+
+  .bm-burger-button {
+    display: none !important;
+  }
+  .bm-menu { display: none !important; }
+  .bm-overlay { display: none !important; }
 }
