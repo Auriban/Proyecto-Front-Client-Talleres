@@ -6,84 +6,123 @@ import './LoginPage.css';
 /**
  * Página de login y registro.
  *
- * - Gestiona las vistas de registro e inicio de sesión.
- * - Usa el contexto de autenticación para realizar login/registro.
- * - Redirige según el rol devuelto por la API.
- *
- * @returns {JSX.Element}
+ * Usa el contexto de autenticación para realizar login/register (cookies httpOnly).
+ * Añade validación simple en el cliente y muestra errores amigables.
  */
-
 export const LoginPage = () => {
-  // Usar el contexto 
-  const { login, register, cargando, error } = useAuthContext();
+  const { login, register, cargando: cargandoGlobal } = useAuthContext();
   const navigate = useNavigate();
 
   const [vista, setVista] = useState('register');
-
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-    name: ''
-  });
+  const [form, setForm] = useState({ email: '', password: '', name: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [errorLocal, setErrorLocal] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setErrorLocal(null);
+  };
+
+  const validateRegister = () => {
+    if (!form.name || form.name.trim().length < 2) {
+      return 'El nombre debe tener al menos 2 caracteres';
+    }
+    if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) {
+      return 'Email no válido';
+    }
+    if (!form.password || form.password.length < 6) {
+      return 'La contraseña debe tener mínimo 6 caracteres';
+    }
+    return null;
+  };
+
+  const validateLogin = () => {
+    if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) {
+      return 'Email no válido';
+    }
+    if (!form.password || form.password.length < 6) {
+      return 'La contraseña debe tener mínimo 6 caracteres';
+    }
+    return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setErrorLocal(null);
+
     if (vista === 'login') {
-      const resp = await login(form.email, form.password);
-
-      //console.log(' LOGIN RESP', resp);
-      //console.log(' localStorage token', localStorage.getItem('token'));
-
-      if (resp.ok) {
-        // Navegar según rol devuelto
-        const role = resp.usuario?.role || 'user';
-        if (role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/user');
-        }
+      const err = validateLogin();
+      if (err) {
+        setErrorLocal(err);
+        return;
       }
+
+      try {
+        setSubmitting(true);
+        const resp = await login(form.email, form.password);
+        if (resp.ok) {
+          const role = resp.usuario?.role || 'user';
+          if (role === 'admin') navigate('/admin');
+          else navigate('/user');
+        } else {
+          setErrorLocal(resp.error || 'Credenciales inválidas');
+        }
+      } catch (err) {
+        setErrorLocal(err?.message || 'Error en el login');
+      } finally {
+        setSubmitting(false);
+      }
+
     } else {
-      const resp = await register(form.email, form.password, form.name);
-      if (resp.ok) {
-        // después de registrarse normalmente es user, ajustar según flujo
-        navigate('/user');
+      // register view
+      const err = validateRegister();
+      if (err) {
+        setErrorLocal(err);
+        return;
+      }
+
+      try {
+        setSubmitting(true);
+        const resp = await register(form.email, form.password, form.name);
+        if (resp.ok) {
+          // normalmente el usuario creado será 'user'
+          navigate('/user');
+        } else {
+          setErrorLocal(resp.error || 'Error al registrarse');
+        }
+      } catch (err) {
+        setErrorLocal(err?.message || 'Error en el registro');
+      } finally {
+        setSubmitting(false);
       }
     }
   };
 
+  const cargando = cargandoGlobal || submitting;
 
   return (
     <div className="login-page">
       <div className="login-card">
 
         <div className="login-tabs">
-
-          <button 
+          <button
             className={vista === 'register' ? 'tab-active' : 'tab'}
-            onClick={() => setVista('register')}
+            onClick={() => { setVista('register'); setErrorLocal(null); }}
+            type="button"
           >
             Registrarse
           </button>
-          <button 
+          <button
             className={vista === 'login' ? 'tab-active' : 'tab'}
-            onClick={() => setVista('login')}
+            onClick={() => { setVista('login'); setErrorLocal(null); }}
+            type="button"
           >
             Ya tengo cuenta
           </button>
         </div>
 
         <div className="login-header">
-          <h1>
-            {vista === 'register'
-              ? 'Crear cuenta'
-              : 'Iniciar sesión'}
-          </h1>
+          <h1>{vista === 'register' ? 'Crear cuenta' : 'Iniciar sesión'}</h1>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
@@ -126,11 +165,11 @@ export const LoginPage = () => {
             />
           </label>
 
-          {error && <div className="login-error">{error}</div>}
+          {(errorLocal) && <div className="login-error">{errorLocal}</div>}
 
-          <button 
-            type="submit" 
-            className="login-button" 
+          <button
+            type="submit"
+            className="login-button"
             disabled={cargando}
           >
             {cargando

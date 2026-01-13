@@ -6,7 +6,7 @@ const BASE_URL = import.meta.env.VITE_URL || 'http://localhost:3000';
 /**
  * Componente para editar el contenido de la página Home desde el admin.
  * - Permite cambiar textos y subir imágenes.
- * - Envía todo con FormData al backend (PUT).
+ * - Envía todo con FormData al backend (PUT) usando cookies httpOnly (credentials: 'include').
  *
  * @returns {JSX.Element}
  */
@@ -31,13 +31,11 @@ export const HomeContentAdmin = () => {
   const [error, setError] = useState('');
 
   // Función que carga el contenido actual del backend.
-  // Se declara antes del useEffect para evitar errores de referencia.
   const fetchHome = async () => {
     setCargando(true);
     try {
       const res = await fetch(`${BASE_URL}/api/home/public`);
       const data = await res.json();
-      // Si el backend devolvió datos, los ponemos en el formulario
       if (data?.ok && data.data) {
         setFormData({
           titulo: data.data.titulo || '',
@@ -54,7 +52,6 @@ export const HomeContentAdmin = () => {
     }
   };
 
-  // Al montar > pedir los datos del home
   useEffect(() => {
     fetchHome();
   }, []);
@@ -87,13 +84,10 @@ export const HomeContentAdmin = () => {
     if (images.card3_imagen) formDataToSend.append('card3_imagen', images.card3_imagen);
 
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch(`${BASE_URL}/api/home/`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend
+        body: formDataToSend,
+        credentials: 'include' // <- importante: enviar cookie httpOnly
       });
 
       if (!res.ok) {
@@ -143,7 +137,6 @@ export const HomeContentAdmin = () => {
             accept="image/*"
             onChange={(e) => handleImageChange(e, 'portada')}
           />
-          {/* Si hay archivo seleccionado mostramos su nombre */}
           {images.portada && <small className="archivo-seleccionado">{images.portada.name}</small>}
         </div>
 
