@@ -1,11 +1,12 @@
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthContext } from '../contexts/AuthContext'; 
 import { useTallerDetalle } from '../hooks/useTallerDetalle';
 import { useInscripciones } from '../hooks/useInscripciones';
 import { Map } from '../components/Map';
 import Swal from 'sweetalert2';
 import './VerTaller.css';
+
 
 const BASE_URL = import.meta.env.VITE_URL || 'http://localhost:3000';
 
@@ -28,7 +29,7 @@ export const VerTaller = () => {
   const { inscribirse, cargando: cargandoInscripcion } = useInscripciones();
 
   // Usuario desde el hook de autenticación
-  const { usuario } = useAuth();
+  const { usuario } = useAuthContext(); 
 
   if (cargando) return <div className="loading">Cargando...</div>;
   if (error || !taller) return <div className="error">Taller no encontrado</div>;
