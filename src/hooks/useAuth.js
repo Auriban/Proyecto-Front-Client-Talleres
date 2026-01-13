@@ -2,107 +2,99 @@ import { useState, useEffect } from 'react';
 import { loginAuth, registerAuth, verificarPerfil } from '../helpers/llamadafetch';
 
 /**
- * Hook de autenticación.
+ * Hook de autenticación (cookies httpOnly).
  *
- * - Verifica el token al montar el hook y mantiene el usuario en estado.
- * - Provee funciones para login, register y logout.
+ * - Usa verificarPerfil() para restaurar sesión al montar.
+ * - login/register llaman a los endpoints que setean cookie httpOnly en el servidor.
  */
 export const useAuth = () => {
-  // Usuario actual (null si no hay)
   const [usuario, setUsuario] = useState(null);
-  // carga mientras se comprueba el token 
   const [cargando, setCargando] = useState(true);
-  // Mensaje de error si ocurre algo
   const [error, setError] = useState(null);
 
-  // Verifica el usuario usando token y la API
   const verificarAuth = async () => {
     setCargando(true);
+    setError(null);
     try {
-      const token = localStorage.getItem('token');
-
-      if (token) {
-        try {
-          // Primero intenta obtener el perfil desde la API 
-          const data = await verificarPerfil();
-          if (data?.usuario) {
-            setUsuario(data.usuario);
-            setCargando(false);
-            return;
-          }
-        } catch (err) {
-          // Si la API falla, intentar decodificar el token localmente
-          try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            setUsuario(payload);
-            setCargando(false);
-            return;
-          } catch (e) {
-            // Token inválido o corrupto > eliminarlo
-            localStorage.removeItem('token');
-            setUsuario(null);
-          }
-        }
+      // verificarPerfil hace fetch('/api/auth/perfil', { credentials: 'include' })
+      const data = await verificarPerfil();
+      if (data && data.usuario) {
+        setUsuario(data.usuario);
+      } else {
+        setUsuario(null);
       }
-
-      // Si no hay token o no se pudo obtener usuario > null
-      setUsuario(null);
     } catch (err) {
-      // Cualquier fallo > limpiar y quitar token
+      console.error('Error verificando sesión:', err);
       setUsuario(null);
-      localStorage.removeItem('token');
+      setError(err?.message || 'Error verificando sesión');
     } finally {
       setCargando(false);
     }
   };
 
-  // Al montar, comprobar si hay sesión
   useEffect(() => {
     verificarAuth();
   }, []);
 
-  // Login > guarda token y refresca el usuario
   const login = async (email, password) => {
-    try {
-      setCargando(true);
-      setError(null);
-      const data = await loginAuth(email, password);
-      localStorage.setItem('token', data.token);
-      // Volver a verificar para cargar usuario desde la API
-      await verificarAuth();
-      return { ok: true, usuario: data.usuario };
-    } catch (err) {
-      const msg = err?.message || String(err);
-      setError(msg);
-      return { ok: false, error: msg };
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  // Registro > guarda token y pone el usuario directamente
-  const register = async (email, password, name) => {
-    try {
-      setCargando(true);
-      setError(null);
-      const data = await registerAuth(email, password, name);
-      localStorage.setItem('token', data.token);
-      setUsuario(data.usuario);
-      return { ok: true, usuario: data.usuario };
-    } catch (err) {
-      const msg = err?.message || String(err);
-      setError(msg);
-      return { ok: false, error: msg };
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  // Logout > quitar token y limpiar estado
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUsuario(null);
+    setCargando(true);
     setError(null);
+    try {
+      // loginAuth debe hacer fetch(..., { credentials: 'include' })
+      const data = await loginAuth(email, password);
+      if (data && data.usuario) {
+        setUsuario(data.usuario);
+        return { ok: true, usuario: data.usuario };
+      }
+      // en caso de respuesta mala:
+      setUsuario(null);
+      return { ok: false, error: 'Respuesta inválida del servidor' };
+    } catch (err) {
+      const msg = err?.message || String(err);
+      setError(msg);
+      setUsuario(null);
+      return { ok: false, error: msg };
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const register = async (email, password, name) => {
+    setCargando(true);
+    setError(null);
+    try {
+      // registerAuth debe hacer fetch(..., { credentials: 'include' })
+      const data = await registerAuth(email, password, name);
+      if (data && data.usuario) {
+        setUsuario(data.usuario);
+        return { ok: true, usuario: data.usuario };
+      }
+      setUsuario(null);
+      return { ok: false, error: 'Respuesta inválida del servidor' };
+    } catch (err) {
+      const msg = err?.message || String(err);
+      setError(msg);
+      setUsuario(null);
+      return { ok: false, error: msg };
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      // Llama al endpoint que borra la cookie en el servidor
+      await fetch(`${import.meta.env.VITE_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (err) {
+      console.error('Error en logout:', err);
+    } finally {
+      // limpiamos el estado del cliente
+      setUsuario(null);
+      setError(null);
+    }
   };
 
   return { usuario, cargando, error, login, register, logout };

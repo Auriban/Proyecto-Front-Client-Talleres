@@ -32,7 +32,7 @@ export const AdminNav = () => {
               className="mobile-burger-menu"
             >
               <Link to="/admin" className="bm-item" onClick={() => setOpen(false)}>Panel Admin</Link>
-              <Link to="/admin/usuarios" className="bm-item" onClick={() => setOpen(false)}>Usuarios</Link>
+              <Link to="/admin/usuarios" className="bm-item" onClick={() => setOpen(false)}>Usuarios Admin</Link>
               <Link to="/admin/home" className="bm-item" onClick={() => setOpen(false)}>Home Admin</Link>
               <Link to="/admin/talleres" className="bm-item" onClick={() => setOpen(false)}>Talleres Admin</Link>
               <button onClick={() => { logout(); setOpen(false); }} className="bm-item btn-logout">Logout</button>
