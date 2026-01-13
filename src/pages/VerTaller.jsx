@@ -105,13 +105,14 @@ export const VerTaller = () => {
               🔐 Inicio de sesión necesario para inscribirse
             </button>
           </div>
+        ) : usuario.role !== 'user' ? (
+          <div className="login-requerido">
+            <button className="btn-login" disabled type="button">
+              ❗ Solo usuarios pueden inscribirse
+            </button>
+          </div>
         ) : (
-          <button
-            onClick={handleInscribirse}
-            disabled={cargandoInscripcion}
-            className="btn-inscribirse"
-            type="button"
-          >
+          <button onClick={handleInscribirse} disabled={cargandoInscripcion} className="btn-inscribirse" type="button">
             {cargandoInscripcion ? 'Inscribiendo...' : 'Inscribirse'}
           </button>
         )}
